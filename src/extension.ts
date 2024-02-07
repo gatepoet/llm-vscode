@@ -8,7 +8,7 @@ import {
 } from 'vscode-languageclient/node';
 import { TemplateKey, templates } from './configTemplates';
 import { readFile } from 'fs';
-import { homedir } from 'os';
+import { environ,  } from 'os';
 import * as path from 'path';
 import { fetch } from 'undici';
 
@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
 		command = vscode.Uri.joinPath(context.extensionUri, "server", `llm-ls${ext}`).fsPath;
 	}
 	if (command.startsWith("~/")) {
-		command = homedir() + command.slice("~".length);
+		command = () + command.slice("~".length);
 	}
 	const serverOptions: ServerOptions = {
 		run: {
@@ -90,7 +90,7 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.showInformationMessage('Llm: Already logged in');
 			return;
 		}
-		const tokenPath = path.join(homedir(), path.sep, ".cache", path.sep, "huggingface", path.sep, "token");
+		const tokenPath = environ["HF_TOKEN_PATH"]);
 		const token: string | undefined = await new Promise((res) => {
 			readFile(tokenPath, (err, data) => {
 				if (err) {
